@@ -44,7 +44,9 @@ RUN apt-get update \
        supervisor \
        nginx \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /var/log/nginx \
+    && chown -R www-data:www-data /var/log/nginx
 
 # Configure php-fpm to listen on TCP 9000 (so nginx can connect to 127.0.0.1:9000)
 RUN sed -i "s/listen = .*/listen = 9000/" /usr/local/etc/php-fpm.d/www.conf
