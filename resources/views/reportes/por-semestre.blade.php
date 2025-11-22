@@ -1,0 +1,93 @@
+@extends('layouts.app')
+
+@section('title', 'Reporte por Semestre')
+
+@section('content')
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-calendar-alt"></i> Reporte de Atenciones por Semestre</h1>
+    <a href="{{ route('reportes.index') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        @if($reportes->count() > 0)
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-primary">
+                        <tr>
+                            <th width="50">#</th>
+                            <th>Semestre</th>
+                            <th class="text-end">Total de Atenciones</th>
+                            <th width="200">Porcentaje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $totalGeneral = $reportes->sum('total_atenciones');
+                        @endphp
+                        @foreach($reportes as $index => $reporte)
+                            @php
+                                $porcentaje = $totalGeneral > 0 ? ($reporte->total_atenciones / $totalGeneral) * 100 : 0;
+                            @endphp
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td><strong>{{ $reporte->semestre }}</strong></td>
+                                <td class="text-end">
+                                    <span class="badge bg-primary fs-6">{{ $reporte->total_atenciones }}</span>
+                                </td>
+                                <td>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: {{ $porcentaje }}%"
+                                             aria-valuenow="{{ $porcentaje }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                            {{ number_format($porcentaje, 1) }}%
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot class="table-secondary">
+                        <tr>
+                            <th colspan="2" class="text-end">TOTAL GENERAL:</th>
+                            <th class="text-end">
+                                <span class="badge bg-dark fs-6">{{ $totalGeneral }}</span>
+                            </th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Botón de impresión -->
+            <div class="text-center mt-4">
+                <button onclick="window.print()" class="btn btn-primary">
+                    <i class="fas fa-print"></i> Imprimir Reporte
+                </button>
+            </div>
+        @else
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i> No hay datos disponibles para mostrar.
+            </div>
+        @endif
+    </div>
+</div>
+@endsection
+
+@push('styles')
+<style>
+    @media print {
+        .sidebar, .navbar, .btn, .card-footer {
+            display: none !important;
+        }
+        .col-md-9 {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+        }
+    }
+</style>
+@endpush
