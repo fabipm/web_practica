@@ -40,6 +40,13 @@
                             </button>
                         </div>
                     </form>
+
+                    <div class="text-center mt-3">
+                        <p class="mb-0">¿No tienes una cuenta?</p>
+                        <a href="{{ route('register') }}" class="btn btn-outline-primary btn-sm mt-2">
+                            <i class="fas fa-user-plus"></i> Registrarse
+                        </a>
+                    </div>
                 </div>
                 <div class="card-footer text-center text-muted">
                     <small>Universidad Privada de Tacna - Sistema de Consejería</small>
