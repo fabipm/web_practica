@@ -8,10 +8,13 @@ RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoload
 # Stage 2: Node build for frontend assets
 FROM node:20-bullseye AS node-builder
 WORKDIR /app
-COPY package.json package-lock.json* ./
+COPY package.json package-lock.json ./
+# Install dependencies - npm ci for production builds
 RUN npm ci --prefer-offline --no-audit --progress=false
 COPY resources ./resources
 COPY vite.config.js .
+# Create public directory for build output
+RUN mkdir -p public
 RUN npm run build
 
 # Final stage: PHP-FPM + Nginx + Supervisor
@@ -54,7 +57,7 @@ COPY --from=vendor /app/vendor /var/www/html/vendor
 
 # Copy built assets to public/build
 RUN rm -rf /var/www/html/public/build || true
-COPY --from=node-builder /app/dist /var/www/html/public/build
+COPY --from=node-builder /app/public/build /var/www/html/public/build
 
 # Ensure correct ownership for writable dirs
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache || true
